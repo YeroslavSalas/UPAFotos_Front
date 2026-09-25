@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UPAFotos</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="loginScreen" class="login-screen">
+    <div class="login-box">
+      <div class="login-brand">UPAFotos</div>
+
+      <form id="loginForm">
+        <p class="login-sub">Inicia sesión para continuar</p>
+        <input type="email" id="loginUser" placeholder="Correo electrónico" autocomplete="username" required />
+        <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password" required />
+        <button type="submit">Entrar</button>
+      </form>
+
+      <form id="registerForm" class="hidden">
+        <p class="login-sub">Crea tu cuenta</p>
+        <input type="text" id="registerNombre" placeholder="Nombre" autocomplete="name" required />
+        <input type="email" id="registerUser" placeholder="Correo electrónico" autocomplete="username" required />
+        <input type="password" id="registerPass" placeholder="Contraseña" autocomplete="new-password" required />
+        <input type="password" id="registerPassConfirm" placeholder="Confirmar contraseña" autocomplete="new-password" required />
+        <button type="submit">Registrarme</button>
+      </form>
+
+      <p id="loginError" class="login-error hidden"></p>
+
+      <p class="login-switch">
+        <span id="showRegister">¿No tienes cuenta? Regístrate</span>
+        <span id="showLogin" class="hidden">¿Ya tienes cuenta? Inicia sesión</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="app hidden" id="appRoot">
+    <div id="sidebarOverlay" class="sidebar-overlay hidden"></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">UPAFotos</div>
+        <button id="closeSidebar" class="sidebar-close" aria-label="Cerrar menú">✕</button>
+      </div>
+
+      <button id="theme-toggle" class="theme-toggle-btn">Cambiar Tema</button>
+
+      <label class="upload-btn">
+        + Subir
+        <input type="file" id="fileInput" accept="image/*" multiple hidden />
+      </label>
+
+      <button id="openCameraBtn" class="upload-btn camera-btn" type="button">Tomar foto</button>
+
+      <nav class="nav">
+        <button class="nav-item active" data-view="photos">Fotos</button>
+        <button class="nav-item" data-view="albums">Álbumes</button>
+        <button class="nav-item" data-view="favorites">Favoritos</button>
+        <button class="nav-item" data-view="trash">Papelera</button>
+      </nav>
+
+      <button id="logoutBtn" class="logout-btn">Cerrar sesión</button>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button id="hamburgerBtn" class="hamburger-btn" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <input type="text" id="searchInput" class="search" placeholder="Buscar por nombre..." />
+      </header>
+
+      <div id="dropZone" class="drop-zone">
+        Arrastra tus fotos aquí o usa el botón "Subir"
+      </div>
+      <div id="uploadProgress" class="upload-progress hidden"></div>
+
+      <section id="view-photos" class="view">
+        <main id="gallery" class="gallery"></main>
+        <p id="emptyPhotos" class="empty-state hidden">Aún no has subido ninguna foto.</p>
+      </section>
+
+      <section id="view-albums" class="view hidden">
+        <div class="albums-grid" id="albumsGrid">
+          <div class="album-card new-album" id="newAlbumCard">
+            <div class="album-cover empty">+</div>
+            <div class="album-name">Crear álbum</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-album-detail" class="view hidden">
+        <div class="album-detail-header">
+          <button id="backToAlbums" class="back-btn">← Álbumes</button>
+          <h2 id="albumDetailTitle"></h2>
+          <button id="renameAlbumBtn" class="link-btn">Renombrar</button>
+          <button id="deleteAlbumBtn" class="link-btn danger">Eliminar álbum</button>
+        </div>
+        <main id="albumGallery" class="gallery"></main>
+        <p id="emptyAlbum" class="empty-state hidden">Este álbum no tiene fotos. Añade fotos desde la pestaña "Fotos".</p>
+      </section>
+
+      <section id="view-favorites" class="view hidden">
+        <main id="favoritesGallery" class="gallery"></main>
+        <p id="emptyFavorites" class="empty-state hidden">No tienes fotos favoritas todavía. Márcalas como favorita.</p>
+      </section>
+
+      <section id="view-trash" class="view hidden">
+        <main id="trashGallery" class="gallery"></main>
+        <p id="emptyTrash" class="empty-state hidden">La papelera está vacía.</p>
+      </section>
+    </div>
+  </div>
+
+  <div id="lightbox" class="lightbox hidden">
+    <button id="closeLightbox" class="lightbox-close">✕</button>
+    <div class="lightbox-actions">
+      <button id="favBtn" class="icon-btn" title="Favorito">Favorito</button>
+      <button id="addToAlbumBtn" class="icon-btn" title="Añadir a álbum">Álbum</button>
+      <button id="deletePhoto" class="icon-btn" title="Eliminar">Eliminar</button>
+    </div>
+    <img id="lightboxImg" src="" alt="" />
+  </div>
+
+  <div id="albumPickerModal" class="modal hidden">
+    <div class="modal-box">
+      <h3>Añadir a álbum</h3>
+      <div id="albumPickerList" class="album-picker-list"></div>
+      <div class="modal-actions">
+        <input type="text" id="newAlbumNameInline" placeholder="Nuevo álbum..." />
+        <button id="createAlbumInlineBtn">Crear</button>
+      </div>
+      <button id="closeAlbumPicker" class="link-btn">Cerrar</button>
+    </div>
+  </div>
+
+  <div id="cameraModal" class="modal hidden">
+    <div class="modal-box camera-box">
+      <h3>Tomar foto</h3>
+      <video id="cameraVideo" autoplay playsinline></video>
+      <canvas id="cameraCanvas" class="hidden"></canvas>
+      <p id="cameraError" class="login-error hidden"></p>
+      <div class="modal-actions">
+        <button id="captureBtn" type="button">Capturar</button>
+        <button id="closeCameraBtn" type="button" class="link-btn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
